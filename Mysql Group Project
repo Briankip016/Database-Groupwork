@@ -1,0 +1,362 @@
+-- Create Book store database
+
+CREATE DATABASE bookstore;
+
+-- Select the book store database too use
+use bookstore;
+
+-- Creating A Book Table
+
+CREATE TABLE Book(
+	Book_id INT PRIMARY KEY AUTO_INCREMENT,
+	Book_title VARCHAR (200) NOT NULL,
+	Book_publication_year YEAR,
+	Book_price DECIMAL (8, 2),
+	Book_publisher_id INT,
+	Book_language_id INT
+);
+
+-- Creating A Author Table
+
+CREATE TABLE Author(
+Athor_id INT PRIMARY KEY AUTO_INCREMENT,
+Author_first_name VARCHAR (50),
+Author_last_name VARCHAR (50)
+);
+
+-- Creating A Book author Table
+
+CREATE TABLE Book_author(
+book_id INT ,
+author_id INT,
+PRIMARY KEY (book_id, author_id),
+FOREIGN KEY (book_id) REFERENCES Book(Book_id),
+FOREIGN KEY (author_id) REFERENCES Author(Author_id)
+);
+
+-- changing column name
+
+ALTER TABLE Author
+CHANGE Athor_id Author_id INT;
+
+-- Creating A Book language Table
+
+CREATE TABLE Book_language(
+language_id INT PRIMARY KEY AUTO_INCREMENT,
+language_name VARCHAR (50) NOT NULL
+);
+
+-- Creating A Publisher Table
+
+CREATE TABLE Publisher(
+publisher_id INT PRIMARY KEY AUTO_INCREMENT,
+publisher_name VARCHAR (100) NOT NULL
+);
+
+-- Creating Customer Table
+
+CREATE TABLE Customer(
+customer_id INT PRIMARY KEY AUTO_INCREMENT,
+customer_first_name VARCHAR (20),
+customer_last_name VARCHAR (20),
+customer_email VARCHAR (40),
+customer_phone VARCHAR (15)
+);
+
+-- Creating A Country Table
+
+CREATE TABLE Country(
+country_id INT PRIMARY KEY AUTO_INCREMENT,
+country_name VARCHAR (50) NOT NULL
+);
+
+-- Creating A Address status Table
+
+CREATE TABLE Address_staus(
+satus_id INT PRIMARY KEY AUTO_INCREMENT,
+status_name VARCHAR (50) NOT NULL
+);
+
+-- Creating A Adress Table
+
+CREATE TABLE Adress(
+    adress_id INT PRIMARY KEY AUTO_INCREMENT,
+    adress_street VARCHAR(255),
+    adress_city VARCHAR(100),
+    adress_postal_code VARCHAR(20),
+    country_id INT,
+    status_id INT,
+    FOREIGN KEY (country_id) REFERENCES Country(country_id),
+    FOREIGN KEY (status_id) REFERENCES Adress_status(status_id)
+    );
+
+-- changiing Table name
+ 
+ALTER TABLE Address_staus
+CHANGE satus_id status_id INT;
+RENAME TABLE Address_staus TO Adress_status;
+
+-- Creating A Customer address Table
+
+CREATE TABLE Customer_address (
+    customer_id INT,
+    adress_id INT,
+    PRIMARY KEY (customer_id, adress_id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    FOREIGN KEY (adress_id) REFERENCES Adress(adress_id)
+);
+
+-- Creating A Shiping method Table
+
+CREATE TABLE shiping_method(
+shiping_id INT PRIMARY KEY AUTO_INCREMENT,
+shiping_name VARCHAR (100) NOT NULL,
+shiping_cost DECIMAL (6, 2)
+);
+
+-- Creating A Order status Table
+
+CREATE TABLE Oder_status(
+status_id INT PRIMARY KEY AUTO_INCREMENT,
+status_name VARCHAR (80) NOT NULL
+);
+
+-- Creating A Cuct order Table
+
+CREATE TABLE Cust_order(
+cust_order_id INT PRIMARY KEY AUTO_INCREMENT,
+customer_id INT,
+order_date DATETIME,
+shiping_id INT,
+status_id int,
+FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+FOREIGN KEY (shiping_id) REFERENCES Shiping_method(shiping_id),
+FOREIGN KEY (status_id) REFERENCES Oder_status(status_id)
+);
+
+-- Creating A Order Line Table
+
+CREATE TABLE Order_line(
+cust_order_id INT,
+book_id INT,
+quantity_id INT,
+PRIMARY KEY (cust_order_id, book_id),
+FOREIGN KEY (cust_order_id) REFERENCES Cust_order(cust_order_id),
+FOREIGN KEY (book_id) REFERENCES Book (Book_id)
+);
+
+-- Creating A Order history Table
+
+CREATE TABLE Order_history(
+order_history_id INT PRIMARY KEY AUTO_INCREMENT,
+cust_order_id INT,
+status_id INT,
+update_time DATETIME,
+FOREIGN KEY (cust_order_id) REFERENCES Cust_order(cust_order_id),
+FOREIGN KEY (status_id) REFERENCES Order_status(status_id)
+);
+
+-- Renaming table
+
+RENAME TABLE Order_staus to Order_status;
+
+-- Inserting Data to Tables 
+
+-- Inserting data into book 
+
+INSERT INTO Book (Book_title, Book_publication_year, Book_price, Book_publisher_id, Book_language_id) VALUES
+('Learn SQL', 2021, 29.99, 1, 1),
+('Advanced Python',  2022, 45.50, 2, 1),
+('World History', 2019, 35.00, 3, 2);
+
+-- Inserting data into book_language 
+
+INSERT INTO book_language (language_name) VALUES
+('English'), ('French'), ('Spanish'), ('Kiswahili'), ('German');
+
+-- Inserting data into Publisher
+
+INSERT INTO publisher (publisher_name) VALUES
+('Pearson'), ('O’Reilly Media'), ('Penguin Random House'), ('Super Man'), ('Wonder Woman');
+
+-- Inserting data into Author
+
+INSERT INTO Author (Author_first_name, Author_last_name) VALUES
+('John', 'Smith'),
+('Alice', 'Walker'),
+('Forest', 'Frank'),
+('Allan', 'Walker'),
+('Bob', 'Brown');
+
+-- Modified the 'Author_id' column to add AUTO_INCREMENT for automatic ID generation. 
+-- Dropped and re-added the foreign key constraint from 'book_author' to allow the change, 
+-- since foreign keys must be temporarily removed to modify referenced columns.
+
+
+-- Step 1: Drop FK
+
+ALTER TABLE Book_author DROP FOREIGN KEY book_author_ibfk_2;
+
+-- Step 2: Add AUTO_INCREMENT
+
+ALTER TABLE Author MODIFY COLUMN Author_id INT NOT NULL AUTO_INCREMENT;
+
+-- Step 3: Add FK back
+
+ALTER TABLE Book_author
+ADD CONSTRAINT book_author_ibfk_2 
+FOREIGN KEY (author_id) REFERENCES Author(Author_id);
+
+-- Inserting data into Author
+
+-- Inserting data into Book author
+
+INSERT INTO Book_author (Book_id, Author_id) VALUES
+(1, 1), -- Learn SQL by John Smith
+(2, 2), -- Advanced Python by Alice Walker
+(3, 3), -- World History by Forest Frank
+(3, 4), -- World History by Allan Walker
+(1, 5); -- Learn SQL by Bob Brown
+
+-- Inserting data into customer
+
+INSERT INTO Customer (customer_first_name, customer_last_name, customer_email, customer_phone) VALUES
+('Kevin', 'Kipngeno', 'kevin@example.com', '0712345678'),
+('Carson', 'Joseph', 'carson@example.com', '0712345678'),
+('Brian', 'Kipkorir', 'brian@example.com', '0712345678'),
+('Jane', 'Doe', 'jane@example.com', '0723456789');
+
+-- Inserting data into country
+
+INSERT INTO Country (country_name) VALUES
+('Kenya'), ('USA'), ('UK'),('Brazil'), ('Jericho');
+
+-- Inserting data into Adress_satatus
+
+INSERT INTO Adress_status (status_name) VALUES
+('Current'), ('Old');
+
+ALTER TABLE Adress_status
+MODIFY COLUMN status_id INT NOT NULL AUTO_INCREMENT;
+
+
+-- Step 1: Drop FK
+ALTER TABLE Adress DROP FOREIGN KEY adress_ibfk_2;
+
+-- Step 2: Add AUTO_INCREMENT
+ALTER TABLE Adress_status MODIFY COLUMN status_id INT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE Adress
+ADD CONSTRAINT adress_ibfk_2
+FOREIGN KEY (status_id) REFERENCES Adress_status(status_id);
+
+-- Inserting data into Adress
+
+INSERT INTO Adress (adress_street, adress_city, adress_postal_code, country_id, status_id) VALUES
+('Moi Avenue', 'Nairobi', '00100', 1, 1),
+('Tom Mboya Street', 'Nairobi', '001002', 2, 1),
+('City Hall', 'Nairobi', '001001', 3, 2),
+('123 Main St', 'New York', '10001', 4, 1),
+('Oxford Rd', 'London', 'SW1A', 5, 2);
+
+-- Inserting data into Customer Adress
+
+INSERT INTO Customer_address (customer_id, adress_id) VALUES
+(1, 1),  -- Kevin Kipngeno lives in Nairobi
+(4, 5);  -- Jane Doe lives in New York
+
+-- Inserting data into Shiping Method
+
+INSERT INTO shiping_method (shiping_name, shiping_cost) VALUES
+('Standard Shipping', 5.00),
+('Supper Shipping', 5.00),
+('Delayed Shipping', 5.00),
+('Express Shipping', 10.00);
+
+-- Inserting data into Order Status
+
+INSERT INTO Order_status (status_name) VALUES
+('Pending'), ('Shipped'), ('Delivered'),('Cancelled');
+
+-- Inserting data into Cust Order
+
+INSERT INTO Cust_order (customer_id, order_date, shiping_id,status_id) VALUES
+(3, NOW(), 3, 1),  -- Kevin placed an order
+(4, NOW(), 4, 2);  -- Jane’s order is shipped
+
+-- Inserting data into Order Line
+
+INSERT INTO Order_line (cust_order_id, book_id, quantity_id) VALUES
+(1, 1, 2),  -- Kevin ordered 2 copies of Learn SQL
+(3, 2, 1),  -- Brian ordered 1 Advanced Python
+(4, 3, 5);  -- Jane ordered 5 World History
+
+-- Inserting data into Order History
+
+INSERT INTO Order_history (cust_order_id, status_id, update_time) VALUES
+(1, 1, NOW()),  -- Kevin’s order is pending
+(2, 3, NOW()),  -- Kevin’s order is pending
+(4, 2, NOW());  -- Jane’s order was marked shipped
+
+-- Testing QUERIES 
+-- 1. Get all customers and their email addresses
+
+SELECT customer_id, customer_first_name, customer_last_name, customer_email
+FROM Customer;
+
+-- 2. List all books with price, language, and publisher
+
+SELECT 
+    Book.Book_title,
+    Book.Book_price,
+    Book_language.language_name,
+    Publisher.publisher_name AS publisher
+FROM Book
+JOIN Book_language ON Book.Book_language_id
+JOIN Publisher ON Book.Book_publisher_id;
+
+-- 3. List all orders with customer name and status
+
+SELECT 
+    Cust_order.cust_order_id AS order_id,
+    Customer.customer_first_name,
+    Customer.customer_last_name,
+    Order_status.status_name AS order_status,
+    Cust_order.order_date
+FROM cust_order
+JOIN Customer ON Customer.customer_id
+JOIN Order_status ON Order_status.status_id;
+
+-- Step-by-Step: Create Users & Grant Roles
+
+-- 1. Create the Users
+
+-- Admin
+CREATE USER 'bookstore_admin'@'localhost' IDENTIFIED BY 'adminpass';
+
+-- Editor
+CREATE USER 'bookstore_editor'@'localhost' IDENTIFIED BY 'editorpass';
+
+-- Reader
+CREATE USER 'bookstore_reader'@'localhost' IDENTIFIED BY 'readerpass';
+
+-- Changing Passwords
+
+ALTER USER 'bookstore_reader'@'localhost' IDENTIFIED BY 'reader123';
+ALTER USER 'bookstore_admin'@'localhost' IDENTIFIED BY 'admin123';
+ALTER USER 'bookstore_editor'@'localhost' IDENTIFIED BY 'editor123';
+
+
+-- 2. Grant Privileges
+ -- Full access
+GRANT ALL PRIVILEGES ON bookstore.* TO 'bookstore_admin'@'localhost' WITH GRANT OPTION;
+
+-- CRUD Access
+GRANT SELECT, INSERT, UPDATE, DELETE ON bookstore.* TO 'bookstore_editor'@'localhost';
+
+-- Read Only
+GRANT SELECT ON bookstore.* TO 'bookstore_reader'@'localhost';
+
+-- 3.Check the Grants
+
+SHOW GRANTS FOR 'bookstore_editor'@'localhost';
