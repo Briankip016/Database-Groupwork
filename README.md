@@ -87,8 +87,8 @@ Sample records were inserted into all tables to simulate real bookstore operatio
 
 ## 🙌 Contributors
 
-1.⁠ ⁠Brian Kipkorir - briankipkorir016@gmail.com
-2.⁠ ⁠Moses parsele - leyianmoses126@gmail.com
-3.⁠ ⁠Sinetemba Xhosa - xsinetemba@gmail.com
+- 1.⁠ ⁠Brian Kipkorir - briankipkorir016@gmail.com
+- 2.⁠ ⁠Moses parsele - leyianmoses126@gmail.com
+- 3.⁠ ⁠Sinetemba Xhosa - xsinetemba@gmail.com
 
 ---
